@@ -18,18 +18,18 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 app = FastAPI()
 
-# FASTAPI ROUTE
+# endpoint
 @app.get("/")
 def health_check():
     return {"status": "bot is running"}
 
-# DISCORD EVENTS
+# dis event
 @bot.event
 async def on_ready():
     print(f"Bot logged in as {bot.user}")
 
 
-# COMMAND VERIFY
+# verify command
 @bot.command()
 async def verify(ctx, birthday: str):
     print("VERIFY CALLED")
