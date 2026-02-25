@@ -23,7 +23,6 @@ app = FastAPI()
 def health_check():
     return {"status": "bot is running"}
 
-
 # DISCORD EVENTS
 @bot.event
 async def on_ready():
