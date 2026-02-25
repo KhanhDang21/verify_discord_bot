@@ -19,7 +19,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 app = FastAPI()
 
 # endpoint
-@app.get("/health")
+@app.get("/health", methods=["GET", "HEAD"])
 def health_check():
     return {"status": "bot is running"}
 
