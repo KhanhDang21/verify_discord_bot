@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
-import Dashboard from './pages/Dashboard.jsx';
-import BetsPage from './pages/BetsPage.jsx';
+import Dashboard from './pages/Dashboard';
+import BetsPage from './pages/BetsPage';
 
 const NAV = [
   { id: 'dashboard', icon: 'fa-chart-line',     label: 'Dashboard' },
@@ -9,9 +9,14 @@ const NAV = [
 ];
 
 export default function App() {
-  const [page, setPage] = useState('dashboard');
+  const [page, setPage] = useState<'dashboard' | 'bets'>('dashboard');
 
-  const PageComponent = { dashboard: Dashboard, bets: BetsPage }[page];
+  const components: Record<'dashboard' | 'bets', React.ComponentType> = {
+    dashboard: Dashboard,
+    bets: BetsPage
+  };
+
+  const PageComponent = components[page];
   const pageTitle = NAV.find(n => n.id === page)?.label || '';
 
   return (

@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
-import { fetchBets, updateStatus, deleteBet } from '../api.js';
-import { statusMeta, stars, profitClass, profitStr, fmtDate, STATUS_OPTIONS } from '../utils.js';
-import AddBetModal from '../components/AddBetModal.jsx';
+import { fetchBets, updateStatus, deleteBet } from '../api';
+import { statusMeta, stars, profitClass, profitStr, fmtDate, STATUS_OPTIONS } from '../utils';
+import AddBetModal from '../components/AddBetModal';
+import { Bet } from '../types';
 import toast from 'react-hot-toast';
 
 export default function BetsPage() {
-  const [bets, setBets] = useState([]);
+  const [bets, setBets] = useState<Bet[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
   const [showAdd, setShowAdd] = useState(false);
-  const [updatingId, setUpdatingId] = useState(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const load = (f = filter) => {
     setLoading(true);
@@ -21,7 +22,7 @@ export default function BetsPage() {
 
   useEffect(() => { load(); }, []);
 
-  const handleStatusChange = async (id, status) => {
+  const handleStatusChange = async (id: string, status: string): Promise<void> => {
     setUpdatingId(id);
     try {
       await updateStatus(id, status);
@@ -34,7 +35,7 @@ export default function BetsPage() {
     }
   };
 
-  const handleDelete = async (id, match) => {
+  const handleDelete = async (id: string, match: string): Promise<void> => {
     if (!confirm(`Xoá kèo "${match}"?`)) return;
     try {
       await deleteBet(id);

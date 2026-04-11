@@ -1,0 +1,54 @@
+services:
+  # 1. Backend (Express API)
+  - type: web
+    name: nba-keo-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: node dist/app.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false # User will set this in Render UI
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: KEO_CHANNEL_ID
+        sync: false
+
+  # 2. Discord Bot
+  - type: web
+    name: nba-keo-bot
+    env: node
+    plan: free
+    rootDir: bot
+    buildCommand: npm install && npm run build
+    startCommand: node dist/index.js
+    envVars:
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: nba-keo-backend
+          property: host
+      - key: KEO_CHANNEL_ID
+        sync: false
+      - key: VERIFY_CHANNEL_ID
+        sync: false
+
+  # 3. Frontend (Dashboard)
+  - type: web
+    name: nba-keo-frontend
+    env: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishDir: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: nba-keo-backend
+          property: host

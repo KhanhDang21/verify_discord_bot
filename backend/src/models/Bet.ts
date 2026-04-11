@@ -1,6 +1,22 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-const betSchema = new mongoose.Schema(
+export interface IBet extends Document {
+  league: string;
+  match: string;
+  bet: string;
+  odds: number;
+  stake: number;
+  confidence: number;
+  note: string;
+  status: 'pending' | 'win' | 'lose' | 'void' | 'half_win' | 'half_lose';
+  profit: number | null;
+  sentToDiscord: boolean;
+  gameTime: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const betSchema = new Schema<IBet>(
   {
     league: {
       type: String,
@@ -89,4 +105,4 @@ betSchema.pre('save', function (next) {
   next();
 });
 
-export default mongoose.model('Bet', betSchema);
+export default mongoose.model<IBet>('Bet', betSchema);

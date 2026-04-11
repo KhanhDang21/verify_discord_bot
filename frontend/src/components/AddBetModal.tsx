@@ -1,21 +1,38 @@
-import { useState } from 'react';
-import { createBet } from '../api.js';
+import { useState, ChangeEvent, FormEvent } from 'react';
+import { createBet } from '../api';
 import toast from 'react-hot-toast';
 
 const LEAGUES = ['NBA', 'NCAA', 'Euroleague', 'G-League', 'Khác'];
 
-const DEFAULT = {
+interface FormData {
+  league: string;
+  match: string;
+  bet: string;
+  odds: string;
+  stake: string;
+  confidence: string;
+  note: string;
+  gameTime: string;
+}
+
+const DEFAULT: FormData = {
   league: 'NBA', match: '', bet: '', odds: '', stake: '1',
   confidence: '3', note: '', gameTime: '',
 };
 
-export default function AddBetModal({ onClose, onCreated }) {
-  const [form, setForm] = useState(DEFAULT);
+interface AddBetModalProps {
+  onClose: () => void;
+  onCreated: () => void;
+}
+
+export default function AddBetModal({ onClose, onCreated }: AddBetModalProps) {
+  const [form, setForm] = useState<FormData>(DEFAULT);
   const [loading, setLoading] = useState(false);
 
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  const set = (k: keyof FormData) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => 
+    setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!form.match || !form.bet || !form.odds) {
       return toast.error('Vui lòng điền đầy đủ thông tin bắt buộc!');
@@ -31,7 +48,7 @@ export default function AddBetModal({ onClose, onCreated }) {
       toast.success('🔥 Kèo đã được thêm thành công!');
       onCreated?.();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err.response?.data?.message || 'Lỗi khi thêm kèo');
     } finally {
       setLoading(false);

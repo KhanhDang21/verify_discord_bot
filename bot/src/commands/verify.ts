@@ -1,14 +1,19 @@
-// !verify <ngay_sinh>
-// Xác minh thành viên bằng ngày sinh, gán role "Verified"
+import { Message, Role, GuildMember } from 'discord.js';
+
+export interface CommandContext {
+  BIRTHDAY: string;
+  ROLE_NAME: string;
+  client: any;
+}
 
 export const verifyCommand = {
   name: 'verify',
   description: 'Xác minh thành viên bằng ngày sinh',
 
-  async execute(message, args, { BIRTHDAY, ROLE_NAME }) {
+  async execute(message: Message, args: string[], { BIRTHDAY, ROLE_NAME }: CommandContext): Promise<void> {
     const [birthday] = args;
 
-    const deleteAfter = async (msg, delay = 10000) => {
+    const deleteAfter = async (msg: Message, delay: number = 10000): Promise<void> => {
       setTimeout(async () => {
         await message.delete().catch(() => {});
         await msg.delete().catch(() => {});
@@ -35,6 +40,8 @@ export const verifyCommand = {
     }
 
     const member = message.member;
+    if (!member) return;
+
     if (member.roles.cache.has(role.id)) {
       const reply = await message.reply('✅ Bạn đã được xác minh từ trước rồi!');
       deleteAfter(reply);

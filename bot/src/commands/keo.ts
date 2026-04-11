@@ -1,11 +1,19 @@
 import axios from 'axios';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, Message, TextChannel } from 'discord.js';
+import { Bet, CommandContext } from '../types.js';
 
 const API = process.env.BACKEND_URL || 'http://localhost:3000';
 
-function buildEmbed(bet) {
+function buildEmbed(bet: Bet): EmbedBuilder {
   const stars = '⭐'.repeat(bet.confidence) + '☆'.repeat(5 - bet.confidence);
-  const statusMap = { pending: '🟡 Đang chờ', win: '🟢 Win', lose: '🔴 Lose', void: '⚪ Void', half_win: '🔵 Nửa Win', half_lose: '🟠 Nửa Lose' };
+  const statusMap: Record<string, string> = { 
+    pending: '🟡 Đang chờ', 
+    win: '🟢 Win', 
+    lose: '🔴 Lose', 
+    void: '⚪ Void', 
+    half_win: '🔵 Nửa Win', 
+    half_lose: '🟠 Nửa Lose' 
+  };
 
   return new EmbedBuilder()
     .setColor(0x5865f2)
@@ -31,17 +39,17 @@ export const keoCommand = {
   name: 'keo',
   description: 'Xem và quản lý kèo NBA',
 
-  async execute(message, args, { client }) {
+  async execute(message: Message, args: string[], { client }: CommandContext): Promise<void | Message> {
     const sub = args[0]?.toLowerCase();
 
     // !keo send
     if (sub === 'send') {
       const channelId = process.env.KEO_CHANNEL_ID || message.channelId;
-      const channel = await client.channels.fetch(channelId).catch(() => message.channel);
+      const channel = await client.channels.fetch(channelId).catch(() => message.channel) as TextChannel;
 
       try {
         const { data } = await axios.get(`${API}/api/bets?status=pending`);
-        const bets = data.data;
+        const bets: Bet[] = data.data;
 
         if (bets.length === 0) {
           return message.reply('✅ Không có kèo pending nào để gửi');
@@ -63,7 +71,7 @@ export const keoCommand = {
 
     try {
       const { data } = await axios.get(`${API}/api/bets${statusFilter}&limit=5`);
-      const bets = data.data;
+      const bets: Bet[] = data.data;
 
       if (bets.length === 0) {
         return message.reply(sub === 'all' ? '📭 Chưa có kèo nào trong DB' : '✅ Không có kèo pending nào');

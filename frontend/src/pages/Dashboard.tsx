@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
-import { fetchStats } from '../api.js';
+import { useState, useEffect, CSSProperties } from 'react';
+import { fetchStats } from '../api';
+import { Stats } from '../types';
 
 export default function Dashboard() {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = () => {
@@ -70,7 +71,10 @@ export default function Dashboard() {
           <div
             className="stat-card"
             key={c.label}
-            style={{ '--accent-color': c.accent, '--icon-bg': c.iconBg }}
+            style={{ 
+              '--accent-color': c.accent, 
+              '--icon-bg': c.iconBg 
+            } as CSSProperties}
           >
             <div className="stat-icon">{c.icon}</div>
             <div className="stat-value">{c.value}</div>

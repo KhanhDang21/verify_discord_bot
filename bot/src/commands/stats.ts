@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, Message } from 'discord.js';
+import { Stats } from '../types.js';
 
 const API = process.env.BACKEND_URL || 'http://localhost:3000';
 
@@ -8,10 +9,10 @@ export const statsCommand = {
   name: 'stats',
   description: 'Xem thống kê winrate & ROI',
 
-  async execute(message) {
+  async execute(message: Message): Promise<void | Message> {
     try {
       const { data } = await axios.get(`${API}/api/bets/stats`);
-      const s = data.data;
+      const s: Stats = data.data;
 
       const embed = new EmbedBuilder()
         .setColor(0x57f287) // green
